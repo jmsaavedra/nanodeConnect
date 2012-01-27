@@ -1,22 +1,22 @@
 /* 
-
-//----- Simple demo for feeding data to Pachube.
-
-sketch is sending 1 analog and 1 digital sensor readings to Pachube feed: https://pachube.com/feeds/45999
-
-//----- circuit
-
+ 
+ //----- Simple demo for feeding data to Pachube.
+ 
+ sketch is sending 1 analog and 1 digital sensor readings to Pachube feed: https://pachube.com/feeds/45999
+ 
+ //----- circuit
+ 
  >>> LED attached to             digitalPin 5.
  >>> button attached to          digitalPin 3.
  >>> analog sensor attached to   analogPin 2.
  
-nanode note: cannot attach anything to digitalPin 8 or digitalPin 9!
-
-2012-01-25 <saavedra@jos.ph> for http://collab.sensemake.rs 
-based on code by:
-2011-07-08 <jc@wippler.nl> http://opensource.org/licenses/mit-license.php
-
-*/
+ nanode note: cannot attach anything to digitalPin 8 or digitalPin 9!
+ 
+ 2012-01-25 <saavedra@jos.ph> for http://collab.sensemake.rs 
+ based on code by:
+ 2011-07-08 <jc@wippler.nl> http://opensource.org/licenses/mit-license.php
+ 
+ */
 
 #include <EtherCard.h>
 
@@ -47,13 +47,13 @@ void setup () {
   myDigitalVal = 0;
   myAnalogVal = 0;
   prevButtonVal = 0;
-  
+
   etherSetup(); //nanode ethernet stup stuff
 }
 
 void loop () {
   currTime = millis();
-  
+
   ether.packetLoop(ether.packetReceive()); //needs to stay near top of loop
 
   if( !transmitTime() ){         //if transmitTime returns false
@@ -61,7 +61,8 @@ void loop () {
       Serial.print("millis: ");  
       Serial.println(currTime/1000);
     }
-    
+
+    //--- button and sensor reads
     currButtonVal = digitalRead(3);  //read our button
     if(currButtonVal != prevButtonVal){ //check for state change
       prevButtonVal = currButtonVal;
@@ -72,12 +73,16 @@ void loop () {
         }
       }
     }
+
+    digitalWrite(5, myDigitalVal);    //turn LED on/off to represent myDigitalVal
+    myAnalogVal = analogRead(A2);     //read analogVal from analogPin 2
+    //myAnalogVal = random(0, 1023);  //randomizer
     
-    digitalWrite(5, myDigitalVal);  //turn LED on/off to represent myDigitalVal
-    myAnalogVal = analogRead(A2); //read analogVal from analogPin 2
+    delay(15); //debounce
     //myAnalogVal = random(0, 1023);  
   }
 }
+
 
 
 
